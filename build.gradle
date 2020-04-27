@@ -1,0 +1,55 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.6.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencies {
+
+    // for RabbitMQ Reactive integration which is necessary for iOPM
+    compile "io.projectreactor.rabbitmq:reactor-rabbitmq:1.4.1.RC1"
+
+    // for using BlockHound in tests (to detect blocking calls in reactive flow)
+    testCompile 'io.projectreactor.tools:blockhound:1.0.2.RELEASE'
+
+    testCompile("org.testcontainers:testcontainers:1.14.0") {
+        exclude group: 'junit'
+    }
+    testCompile "org.testcontainers:rabbitmq:1.14.0"
+
+    testImplementation "org.testcontainers:junit-jupiter:1.14.1"
+
+    // the below is provided via Spring Initializr
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'io.projectreactor:reactor-test'
+}
+
+test {
+    useJUnitPlatform()
+}
